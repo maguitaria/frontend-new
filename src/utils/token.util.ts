@@ -1,44 +1,53 @@
-// import jwtDecode from 'jsonwebtoken';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Base64 } from 'js-base64';
 
-// interface DecodedToken {
-//     exp: number;
-//     iat: number;
-//     sub: string;
-// }
+export function getUser() {
+    return getToken()
+        .then(token => {
+            console.log('token util :: getUser :: got raw token :: ' + token)
+            try {
+                if (token) {
+                    const user = JSON.parse(Base64.atob(token.split('.')[1]))['user'];
+                    return user;
+                }
+            } catch (e) {
+                return null;
+            }
+        })
+        .then(res => {
+            return res;
+        })
+}
 
-// export function setAuthToken(token: string): void {
-//     sessionStorage.setItem('authToken', token);
-// }
+export function createToken(token: any) {
+    console.log('token util :: createToken :: creating token ' + token);
+    if (token) {
+        console.log('token util :: createToken :: attempting');
+        AsyncStorage.setItem('token', token)
+            .then(() => {
+                AsyncStorage.getItem('token')
+                    .then((result) => {
+                        console.log('token util :: createToken :: successfully created token ' + result);
+                    })
+            })
+    } else {
+        console.log('token util :: createToken :: no token passed');
+        AsyncStorage.removeItem('token');
+    }
+}
 
-// export function getAuthToken(): string | null {
-//     return sessionStorage.getItem('authToken');
-// }
+async function getToken() {
+    console.log('token util :: getToken :: start')
+    try {
+        const tok = await AsyncStorage.getItem('token');
+        console.log('token util :: getToken :: got following token - ' + tok);
+        return tok;
+    } catch (e) {
+        // error reading value
+    }
+}
 
-// export function removeAuthToken(): void {
-//     sessionStorage.removeItem('authToken');
-// }
-
-// export function isAuthTokenValid(token: string): boolean {
-//     const decodedToken = jwtDecode(token) as DecodedToken;
-//     const currentTime = Math.floor(Date.now() / 1000);
-
-//     return currentTime < decodedToken.exp;
-// }
-
-// export function isUserAuthenticated(): boolean {
-//     const token = getAuthToken();
-
-//     if (!token) {
-//         return false;
-//     }
-
-//     return isAuthTokenValid(token);
-// }
-export function createToken(token) {
-    // Generate a random token string
-     token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-    // Save the token to session storage
-    sessionStorage.setItem('token', token);
-
+export function removeToken() {
+    AsyncStorage.removeItem('token');
+    console.log('removed token');
 }

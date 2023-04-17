@@ -1,7 +1,7 @@
 import { ISharePictureInfo } from "../interfaces/picture_interface";
 import { CURRENT_SERVER_API } from "./server.middleware";
 
-// how to make get requests with stringifying input?
+// how to make get requests with signifying input?
 /*
 Router methods
       pictures API endpoints 
@@ -10,7 +10,6 @@ router.get('/picture/getPictureById/:pictureId', pictureCtrl.getPictureById)
 router.get('/picture/getPictureIdByUserId/:userId', pictureCtrl.getPictureIdByUserId)
 router.delete('/picture/deletePicture/:pictureId', pictureCtrl.deletePicture)
 router.post('/picture/updatePictureCaption', pictureCtrl.updatePictureCaption)
-
 */
 
 
@@ -37,6 +36,28 @@ export function sharePicture(pictureInfo: ISharePictureInfo) {
             console.log(resData);
         })
 }
+export function getPictureById() {
+    return fetch(CURRENT_SERVER_API + '/picture/getPictureById/${pictureId}', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', },
+    })
+        .then(res => {
+            if (res.ok) return res.json();
+            throw new Error('Failing with fetching');
+        })
+}
+export function getPictureIdByUserId() {
+    return fetch(CURRENT_SERVER_API + '/picture/getPictureIdByUserId/${userId}', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', },
+    })
+        .then(res => {
+            if (res.ok) return res.json();
+            throw new Error('Failing with fetching');
+        })
+}
+
+
 export function updatePictureCaption(pictureId: string, caption: string) {
     return fetch(CURRENT_SERVER_API + '/picture/updatePictureCaption', {
         method: 'POST',
@@ -59,7 +80,7 @@ export function updatePictureCaption(pictureId: string, caption: string) {
 }
 
 export function deletePicture(pictureId: string) {
-    return fetch(CURRENT_SERVER_API + '/picture/deletePicture/:pictureId', {
+    return fetch(CURRENT_SERVER_API + '/picture/deletePicture/${pictureId}', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
     })
@@ -70,5 +91,3 @@ export function deletePicture(pictureId: string) {
             throw new Error('Deleting sunset failed');
         })
 }
-
-
